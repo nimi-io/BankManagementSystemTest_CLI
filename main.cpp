@@ -5,82 +5,112 @@
 using namespace std;
 
 class BankAccount {
+
 private:
     string accountNumber;
     string accountName;
     double balance;
 
 public:
+
+    // Constructor
     BankAccount(string accountNumber, string accountName, double balance) {
-        accountNumber = accountNumber;
-        accountName = accountName;
-        balance = balance;
+        this->accountNumber = accountNumber;
+        this->accountName = accountName;
+        this->balance = balance;
     }
+
+    // Default constructor
     BankAccount() {
         accountNumber = "";
         accountName = "";
         balance = 0.0;
     }
-    void deposit(double amount) {
-        if (amount > 0 ) {
-            balance += amount;
-            cout << accountNumber << " deposit " << amount << endl;
-            cout << "New Balance is " << balance << endl;
-        }else {
-            cout << "Deposit Failed ! Deposit value must be positive" << endl;
-        }
-    };
-    void withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
-            cout << accountNumber << " withdraw " << amount << endl;
 
+    void deposit(double amount) {
+
+        if (amount > 0) {
+
+            balance += amount;
+
+            cout << accountNumber << " deposited " << amount << endl;
             cout << "New Balance is " << balance << endl;
+
+        } else {
+            cout << "Deposit Failed! Amount must be positive." << endl;
         }
-        else {
-            cout << "Withdraw Failed ! Withdraw value must be positive or Insufficient Funds" << endl;
+    }
+
+    void withdraw(double amount) {
+
+        if (amount > 0 && amount <= balance) {
+
+            balance -= amount;
+
+            cout << accountNumber << " withdrew " << amount << endl;
+            cout << "New Balance is " << balance << endl;
+
+        } else {
+
+            cout << "Withdraw Failed! Invalid amount or insufficient funds." << endl;
         }
     }
 
     void checkBalance() {
-        cout << "Account Balance: "<< balance << endl;
+        cout << "Account Balance: " << balance << endl;
     }
 
     void saveToFile() const {
+
         ofstream file(accountNumber + ".txt");
+
         if (file.is_open()) {
+
             file << accountNumber << endl;
             file << accountName << endl;
             file << balance << endl;
+
             file.close();
-        }else {
-            cout << "Unable to save account" << endl;
+
+            cout << accountNumber << " saved successfully." << endl;
+
+        } else {
+            cout << "Unable to save account." << endl;
         }
     }
 
     static BankAccount loadFromFile(string accountNumber) {
+
         ifstream file(accountNumber + ".txt");
+
+        string accNum;
         string accName;
         double bal;
+
         if (file.is_open()) {
-            getline(file,accName);
-            getline(file,accName);
+
+            getline(file, accNum);
+            getline(file, accName);
             file >> bal;
+
             file.close();
 
-            return  BankAccount(accountNumber, accName, bal);
+            return BankAccount(accNum, accName, bal);
+
         } else {
-            cout << "Unable to load account" << endl;
+
+            cout << "Unable to load account." << endl;
             return BankAccount();
         }
+    }
 
-    };
-
-    bool isVaild() const {
-        return  !accountNumber.empty();
+    bool isValid() const {
+        return !accountNumber.empty();
     }
 };
+
 int main() {
+
     string accNum;
     double initialBalance;
 
@@ -89,52 +119,59 @@ int main() {
 
     BankAccount acc = BankAccount::loadFromFile(accNum);
 
-    if (!acc.isVaild()) {
+    if (!acc.isValid()) {
+
         string accName;
 
-        cout << "\n Creating New Bank Account " << accNum << endl;
-        cout << "Enter account name: ";
-        cin >> accName;
+        cout << "\nCreating New Bank Account " << accNum << endl;
 
         cin.ignore();
-        getline(cin,accName);
+
+        cout << "Enter account name: ";
+        getline(cin, accName);
 
         cout << "Enter Initial account balance: ";
         cin >> initialBalance;
 
         acc = BankAccount(accNum, accName, initialBalance);
-
     }
-
 
     int choice;
 
     do {
-        cout << "\nBank Menu: \n" << endl;
+
+        cout << "\nBank Menu:\n" << endl;
+
         cout << "1. Deposit Amount" << endl;
         cout << "2. Withdraw Amount" << endl;
         cout << "3. Check Balance" << endl;
-        cout << "4. Save As Account" << endl;
+        cout << "4. Save Account" << endl;
         cout << "5. Exit" << endl;
 
         cout << "Enter your choice: ";
-
         cin >> choice;
+
         switch (choice) {
-            case 1:
+
+            case 1: {
                 double depAmount;
+
                 cout << "Enter amount to deposit: ";
                 cin >> depAmount;
 
                 acc.deposit(depAmount);
                 break;
+            }
 
-            case 2:
+            case 2: {
                 double withAmount;
+
                 cout << "Enter amount to withdraw: ";
                 cin >> withAmount;
+
                 acc.withdraw(withAmount);
                 break;
+            }
 
             case 3:
                 acc.checkBalance();
@@ -145,10 +182,15 @@ int main() {
                 break;
 
             case 5:
-                exit(0);
+                cout << "Exiting..." << endl;
+                break;
+
             default:
                 cout << "Invalid choice, Try Again!" << endl;
                 break;
         }
+
     } while (choice != 5);
+
+    return 0;
 }
